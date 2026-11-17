@@ -1,8 +1,7 @@
-import request, { requestWithoutAuth } from '../tools/request'
 import { getAccessToken, removeAcssesToken, removeRefreshToken, setAccessToken, setRefreshToken } from '../tools/utils'
-import { useState } from 'react'
-import AuthContext from '../../contexts/AuthContext'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import request, { requestWithoutAuth } from '../tools/request'
+import AuthContext from '../contexts/AuthContext'
 
 export default function AuthProvaider({ children }) {
     const [user, setUser] = useState({})

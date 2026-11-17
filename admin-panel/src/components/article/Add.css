@@ -1,0 +1,349 @@
+.article-editor {
+  color: #393044;
+}
+
+.article-editor__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.article-editor__eyebrow {
+  color: #a283b8;
+  font-size: 10px;
+}
+
+.article-editor__header h2 {
+  margin: 8px 0 10px;
+  color: #393044;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.article-editor__header p {
+  margin: 0;
+  color: #a095aa;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.article-editor .article-editor__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  height: 38px;
+  padding-inline: 14px;
+  border-color: #eee7f4;
+  border-radius: 10px;
+  background: #fff;
+  color: #927b9f;
+  font-family: inherit;
+  font-size: 11px;
+  box-shadow: none;
+}
+
+.article-editor .article-editor__back:not(:disabled):hover {
+  border-color: #ceb3e5;
+  color: #8b42cc;
+}
+
+/* Layout */
+.article-editor__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  align-items: start;
+  gap: 24px;
+}
+
+.article-editor__form {
+  min-width: 0;
+  padding: 26px;
+  border: 1px solid #eeebf3;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.article-editor__section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.article-editor__section-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 46px;
+  flex-shrink: 0;
+  border: 1px solid #eee5f8;
+  border-radius: 12px;
+  background: #f8f3fd;
+  color: #a171c9;
+  font-size: 20px;
+}
+
+.article-editor__section-title h3 {
+  margin: 0;
+  color: #65516f;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.article-editor__section-title p {
+  margin: 7px 0 0;
+  color: #aaa0b3;
+  font-size: 11px;
+}
+
+/* Fields */
+.article-editor__form .ant-form-item {
+  margin-bottom: 26px;
+}
+
+.article-editor__form .ant-form-item-label {
+  padding-bottom: 10px;
+}
+
+.article-editor__form .ant-form-item-label > label {
+  color: #7c6a89;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.article-editor__form .ant-input {
+  padding: 12px 14px;
+  border: 1px solid #e9e3ef;
+  border-radius: 10px;
+  background: #fdfcfe;
+  color: #514359;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.9;
+  box-shadow: none;
+}
+
+.article-editor__form .ant-input::placeholder {
+  color: #b4aaba;
+  font-size: 12px;
+}
+
+.article-editor__form .ant-input:hover {
+  border-color: #cdb5e2;
+}
+
+.article-editor__form .ant-input:focus {
+  border-color: #a16aca;
+  background: #fff;
+  box-shadow: 0 0 0 3px #9c60ca0a;
+}
+
+.article-editor__form textarea.ant-input {
+  line-height: 2.2;
+}
+
+/* Upload */
+.article-editor__upload {
+  margin-bottom: 28px;
+  padding: 18px;
+  border: 1px dashed #ded0eb;
+  border-radius: 12px;
+  background: #fcfaff;
+}
+
+.article-editor__upload-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  color: #8d719f;
+  font-size: 12px;
+}
+
+.article-editor__upload-heading .anticon {
+  color: #ab87c7;
+  font-size: 17px;
+}
+
+/* Footer actions */
+.article-editor__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding-top: 22px;
+  border-top: 1px solid #f0ebf5;
+}
+
+.article-editor__actions > span {
+  color: #aaa0b3;
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.article-editor__buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.article-editor .article-editor__cancel {
+  height: 40px;
+  padding-inline: 18px;
+  border-color: #eae3f0;
+  border-radius: 10px;
+  color: #94839f;
+  background: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.article-editor .article-editor__publish {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  padding-inline: 18px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(110deg, #a34de2, #7939c9);
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 5px 14px #873bce1a;
+}
+
+.article-editor .article-editor__publish:not(:disabled):hover {
+  background: linear-gradient(110deg, #ad5bea, #8746d4);
+  color: #fff;
+}
+
+.article-editor .article-editor__cancel:not(:disabled):hover {
+  border-color: #c8a9e0;
+  color: #8b42cc;
+}
+
+/* Guide */
+.article-editor__guide {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 22px;
+  border: 1px solid #eee5f7;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #fbf8ff, #f3edf9);
+}
+
+.article-editor__guide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #a270cb07;
+  clip-path: polygon(38% 0, 100% 0, 100% 65%);
+  pointer-events: none;
+}
+
+.article-editor__guide-symbol {
+  display: block;
+  margin-bottom: 22px;
+  color: #a06acb;
+  font-size: 32px;
+}
+
+.article-editor__guide h3 {
+  margin: 0 0 12px;
+  color: #75508c;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.article-editor__guide > p {
+  margin: 0;
+  color: #a08eac;
+  font-size: 11px;
+  line-height: 2;
+}
+
+.article-editor__tips {
+  display: grid;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.article-editor__tips > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.article-editor__tips > div > span {
+  padding-top: 3px;
+  color: #bd9ed2;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.article-editor__tips p {
+  margin: 0;
+  color: #9681a3;
+  font-size: 11px;
+  line-height: 1.9;
+}
+
+.article-editor__guide-footer {
+  display: block;
+  margin-top: 34px;
+  padding-top: 20px;
+  border-top: 1px solid #e8ddef;
+  color: #b29ac1;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .article-editor__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .article-editor__guide {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .article-editor__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .article-editor__header h2 {
+    font-size: 19px;
+  }
+
+  .article-editor__form {
+    padding: 18px 14px;
+    border-radius: 12px;
+  }
+
+  .article-editor__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .article-editor__buttons {
+    width: 100%;
+  }
+
+  .article-editor__buttons > button {
+    flex: 1;
+  }
+}

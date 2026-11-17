@@ -1,0 +1,245 @@
+.article-view {
+    width: 100%;
+    max-width: 920px;
+    margin-inline: auto;
+    color: #514359;
+}
+
+.article-view__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 36px;
+}
+
+.article-view .article-view__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #9a85a9;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.article-view .article-view__back:hover {
+    color: #8b42cc;
+}
+
+.article-view__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 1px solid #eee3f8;
+    border-radius: 9px;
+    background: #f8f2fd;
+    color: #9a63c5;
+    font-size: 10px;
+}
+
+/* Heading */
+.article-view__eyebrow {
+    display: block;
+    color: #b39bc4;
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+.article-view__header h2 {
+    margin: 18px 0 26px;
+    color: #493650;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 750;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.article-view__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #f0eaf5;
+}
+
+.article-view__author {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.article-view__avatar {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 1px solid #eee2f7;
+    border-radius: 13px;
+    background: #f6eefb;
+    color: #a578c5;
+    font-size: 17px;
+}
+
+.article-view__author > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.article-view__author-label {
+    color: #b0a0b9;
+    font-size: 10px;
+}
+
+.article-view__author strong {
+    color: #786082;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.article-view__id {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #b0a0b9;
+    font-size: 10px;
+}
+
+.article-view__id > span {
+    color: #94799f;
+}
+
+/* Cover */
+.article-view__cover {
+    margin: 28px 0 0;
+}
+
+.article-view__cover img {
+    display: block;
+    width: 100%;
+    max-height: 480px;
+    height: auto;
+    object-fit: contain;
+    border: 1px solid #eee7f4;
+    border-radius: 16px;
+    background: #faf7fd;
+}
+
+.article-view__cover img[hidden] {
+    display: none;
+}
+
+/* Article text */
+.article-view__body {
+    padding: 30px 0 38px;
+}
+
+.article-view__text {
+    color: #76647f;
+    font-size: 14px;
+    line-height: 2.4;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    text-align: start;
+}
+
+.article-view__empty {
+    margin: 0;
+    color: #b2a2bc;
+    font-size: 12px;
+    line-height: 2;
+}
+
+/* Footer */
+.article-view__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 22px;
+    border-top: 1px solid #f0eaf5;
+    color: #b3a1bf;
+    font-size: 9px;
+}
+
+.article-view__footer > span:nth-child(2) {
+    color: #bd9dd5;
+    font-size: 20px;
+}
+
+.article-view__footer > span:last-child {
+    letter-spacing: 1px;
+}
+
+/* Loading / error */
+.article-view-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 360px;
+    color: #a18cad;
+    font-size: 12px;
+    text-align: center;
+}
+
+.article-view-state .ant-spin {
+    color: #9852cd;
+}
+
+.article-view-state__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.article-view-state__actions > a {
+    color: #9852cd;
+    font-size: 12px;
+}
+
+.article-view__back:focus-visible {
+    outline: 3px solid #c5a1ed;
+    outline-offset: 5px;
+    border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+    .article-view__nav {
+        margin-bottom: 28px;
+    }
+
+    .article-view__header h2 {
+        margin-top: 14px;
+        font-size: 23px;
+    }
+
+    .article-view__meta {
+        padding-bottom: 22px;
+    }
+
+    .article-view__cover img {
+        border-radius: 12px;
+    }
+
+    .article-view__body {
+        padding-block: 24px;
+    }
+
+    .article-view__text {
+        font-size: 13px;
+        line-height: 2.3;
+    }
+
+    .article-view__footer {
+        font-size: 8px;
+    }
+}

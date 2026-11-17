@@ -1,91 +1,208 @@
-import { Table } from "antd"
-import request from "../tools/request"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { useState } from "react"
-import { Link } from "react-router"
-import { DeleteOutlined, EyeOutlined } from "@ant-design/icons"
-import { Popconfirm } from "antd"
-
+import { Button, Empty, message, Popconfirm, Table, Tooltip } from "antd";
+import request from "../../tools/request";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { Link } from "react-router";
+import {
+    DeleteOutlined,
+    EyeOutlined,
+    FileTextOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
+import "./List.css";
 
 async function getArticles(page) {
-    const { data } = await request("/api/article", { params: { page } })
+    const { data } = await request("/api/article", {
+        params: { page },
+    });
+
     return data;
 }
 
-function useArticles(page) {
-    return useQuery({
+export default function List() {
+    const [page, setPage] = useState(1);
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const {
+        data,
+        isFetching,
+        isError,
+        refetch,
+    } = useQuery({
         queryKey: ["articles", page],
         queryFn: () => getArticles(page),
-        initialData: { items: [], total: 0, page: 1, limit: 4 }
-    })
-}
+    });
 
-export default function List() {
-    const [page, setPage] = useState(1)
-    const { data, isLoading ,refetch } = useArticles(page)
-
-    const { mutateAsync: removeArticle } = useMutation({
+    const {
+        mutateAsync: removeArticle,
+        isPending: isRemoving,
+        variables: removingId,
+    } = useMutation({
         mutationKey: ["remove-article"],
-        mutationFn: (id) => request.delete(`/api/article/${id}`)
-    })
+        mutationFn: (id) => request.delete(`/api/article/${id}`),
+    });
 
-    const COLUMS = [
+    // با نام فیلد فعلی بک‌اند و حالت total سازگار است.
+    const total = Number(data?.totals ?? data?.total ?? 0);
+    const pageSize = Number(data?.limit ?? 4);
+
+    async function handleRemove(id) {
+        try {
+            await removeArticle(id);
+            messageApi.success("مقاله حذف شد.");
+
+            if (data?.items?.length === 1 && page > 1) {
+                setPage((current) => current - 1);
+            } else {
+                await refetch();
+            }
+        } catch {
+            messageApi.error("حذف مقاله انجام نشد. دوباره تلاش کنید.");
+        }
+    }
+
+    const columns = [
         {
-            title: 'id',
-            dataIndex: 'id',
-            key: 'id',
+            title: "شناسه",
+            dataIndex: "id",
+            key: "id",
+            width: 90,
+            render: (id) => (
+                <span className="articles-id">#{id}</span>
+            ),
         },
         {
-            title: 'title',
-            dataIndex: 'title',
-            key: 'title',
+            title: "عنوان مقاله",
+            dataIndex: "title",
+            key: "title",
+            render: (title, record) => (
+                <Link
+                    className="articles-title"
+                    to={`/article/${record.id}`}
+                >
+                    <span className="articles-file-icon">
+                        <FileTextOutlined />
+                    </span>
+
+                    <span>{title || "بدون عنوان"}</span>
+                </Link>
+            ),
         },
         {
-            title: 'Author',
-            dataIndex: 'user',
-            key: 'user',
-            render: (el) => el.username
+            title: "نویسنده",
+            dataIndex: "user",
+            key: "user",
+            width: 190,
+            render: (user) => {
+                const username = user?.username || "نامشخص";
+
+                return (
+                    <div className="articles-author">
+                        <span className="articles-author__avatar">
+                            {Array.from(username)[0]?.toUpperCase()}
+                        </span>
+                        <span>{username}</span>
+                    </div>
+                );
+            },
         },
         {
-            dataIndex: 'id',
-            key: 'action',
-            render: (el) => (
-                <div>
-                    <Link to={`/article/${el}`}>
-                        <EyeOutlined />
-                    </Link>
+            title: "عملیات",
+            key: "actions",
+            width: 120,
+            align: "center",
+            render: (_, record) => (
+                <div className="articles-actions">
+                    <Tooltip title="مشاهده مقاله">
+                        <Link
+                            className="articles-action articles-action--view"
+                            to={`/article/${record.id}`}
+                            aria-label={`مشاهده ${record.title || "مقاله"}`}
+                        >
+                            <EyeOutlined />
+                        </Link>
+                    </Tooltip>
+
                     <Popconfirm
-                        title="Delete the article"
-                        description="Are you sure"
-                        onConfirm={() => {
-                            refetch()
-                            removeArticle(el).then(refetch)
-                        }
-                        }
+                        title="حذف مقاله"
+                        description="این مقاله حذف شود؟ این کار قابل بازگشت نیست."
+                        onConfirm={() => handleRemove(record.id)}
+                        okText="حذف مقاله"
+                        cancelText="انصراف"
+                        okButtonProps={{
+                            danger: true,
+                            loading: isRemoving && removingId === record.id,
+                        }}
+                        disabled={isRemoving}
                     >
-                        <DeleteOutlined />
+                        <Button
+                            className="articles-action articles-action--delete"
+                            type="text"
+                            icon={<DeleteOutlined />}
+                            aria-label={`حذف ${record.title || "مقاله"}`}
+                            loading={isRemoving && removingId === record.id}
+                            disabled={isRemoving}
+                        />
                     </Popconfirm>
-                </div >
-            )
+                </div>
+            ),
         },
-
-    ]
+    ];
 
     return (
-        <div>
-            <Link to={"/article/add"}>Create Article</Link>
+        <section className="articles-page" dir="rtl">
+            {contextHolder}
+
+            <header className="articles-header">
+                <div>
+                    <div className="articles-heading">
+                        <h2>مقالات</h2>
+                        <span className="articles-count">{total}</span>
+                    </div>
+
+                    <p>محتوایت را مدیریت کن و ایده‌های تازه منتشر کن.</p>
+                </div>
+
+                <Link className="articles-create" to="/article/add">
+                    <PlusOutlined />
+                    <span>مقاله جدید</span>
+                </Link>
+            </header>
+
+            {isError && (
+                <div className="articles-error" role="alert">
+                    <span>دریافت مقالات انجام نشد.</span>
+                    <Button type="link" onClick={() => refetch()}>
+                        تلاش دوباره
+                    </Button>
+                </div>
+            )}
+
             <Table
-                dataSource={data?.items}
-                loading={isLoading}
-                columns={COLUMS}
-                rowKey={"id"}
-                onChange={({ current }) => setPage(current)}
+                className="articles-table"
+                dataSource={data?.items ?? []}
+                loading={isFetching}
+                columns={columns}
+                rowKey="id"
+                scroll={{ x: 620 }}
+                onChange={({ current }) => setPage(current ?? 1)}
                 pagination={{
-                    total: data.totals,
-                    current: data.page,
-                    pageSize: data.limit
+                    total,
+                    current: page,
+                    pageSize,
+                    showSizeChanger: false,
+                    hideOnSinglePage: true,
+                    showTotal: (count) => `${count} مقاله`,
+                }}
+                locale={{
+                    emptyText: (
+                        <Empty
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                            description="هنوز مقاله‌ای برای نمایش وجود ندارد."
+                        />
+                    ),
                 }}
             />
-        </div>
-    )
+        </section>
+    );
 }
