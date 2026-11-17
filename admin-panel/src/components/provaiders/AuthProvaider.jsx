@@ -1,0 +1,46 @@
+import request, { requestWithoutAuth } from '../tools/request'
+import { getAccessToken, removeAcssesToken, removeRefreshToken, setAccessToken, setRefreshToken } from '../tools/utils'
+import { useState } from 'react'
+import AuthContext from '../../contexts/AuthContext'
+import { useEffect } from 'react'
+
+export default function AuthProvaider({ children }) {
+    const [user, setUser] = useState({})
+    const [isLoggedIn, setisLoggedIn] = useState(false)
+    const [loading, setLoading] = useState(true)
+
+    function login(data) {
+        return requestWithoutAuth.post("/api/login", data)
+            .then(({ data }) => {
+                setAccessToken(data.accessToken)
+                setRefreshToken(data.refreshToken)
+                getUser()
+            })
+    }
+
+    function getUser() {
+        setLoading(true)
+        request("/api/user")
+            .then(({ data }) => {
+                setUser(data)
+                setisLoggedIn(true)
+            }).finally(() => {
+                setLoading(false)
+            })
+    }
+
+    function logout() {
+        setisLoggedIn(false)
+        removeAcssesToken()
+        removeRefreshToken()
+
+    }
+
+    useEffect(() => {
+        getAccessToken() ? getUser() : setLoading(false)
+
+    }, [])
+    return (
+        <AuthContext.Provider value={{ login, user, loading, isLoggedIn, getUser, logout, removeAcssesToken }}>{children}</AuthContext.Provider>
+    )
+}
