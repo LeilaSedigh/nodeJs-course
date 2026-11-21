@@ -1,67 +1,37 @@
-import { io } from "socket.io-client";
+import io from "socket.io-client";
+import { getAccessToken } from "../../tools/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Input, Spin } from "antd";
+import { Button, Spin } from "antd";
 import {
   ArrowRightOutlined,
   MessageOutlined,
-  SearchOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import request from "../../tools/request";
 import Chat from "./Chat";
 import "./chat.css";
 
+const token = getAccessToken()?.trim();
+
+const socket = io(import.meta.env.VITE_BASE_URL, {
+  extraHeaders: token
+    ? {
+        authorization: token.startsWith("Bearer ")
+          ? token
+          : `Bearer ${token}`,
+      }
+    : {},
+});
+
+
 export default function ChatApp() {
-  const [channel, setChannel] = useState(null);
-  const [search, setSearch] = useState("");
-  const [socket, setSocket] = useState(null);
-  const [connected, setConnected] = useState(false);
+  const [channel, setChannel] = useState();
 
-  useEffect(() => {
-    const connection = io(import.meta.env.VITE_BASE_URL, {
-      // فعلاً مطابق تنظیم فعلی سرور حفظ شده است.
-      extraHeaders: {
-        authorization: "GAPGPTMASKTOKENcpkirvhprwaX0X",
-      },
-    });
-
-    function onConnect() {
-      setConnected(true);
-    }
-
-    function onDisconnect() {
-      setConnected(false);
-    }
-
-    connection.on("connect", onConnect);
-    connection.on("disconnect", onDisconnect);
-    setSocket(connection);
-
-    return () => {
-      connection.off("connect", onConnect);
-      connection.off("disconnect", onDisconnect);
-      connection.disconnect();
-    };
-  }, []);
-
-  const {
-    data: users = [],
-    isPending,
-    isError,
-    refetch,
-    isFetching,
-  } = useQuery({
-    queryKey: ["person"],
-    queryFn: () =>
-      request("/api/person").then(({ data }) => data),
+  const { data: users, isPending, isError } = useQuery({
+    queryKey: ["people"],
+    queryFn: () => request("/api/person").then(({ data }) => data),
   });
-
-  const filteredUsers = users.filter((user) =>
-    String(user.username ?? "")
-      .toLocaleLowerCase()
-      .includes(search.trim().toLocaleLowerCase())
-  );
 
   return (
     <section
@@ -75,60 +45,40 @@ export default function ChatApp() {
             <span className="messenger__heading-icon">
               <MessageOutlined />
             </span>
-
             <div>
               <h2>گفت‌وگوها</h2>
-              <p>یک گفت‌وگوی تازه شروع کن.</p>
+              <p>یک مخاطب برای شروع گفت‌وگو انتخاب کن.</p>
             </div>
           </div>
-
-          <Input
-            className="messenger__search"
-            prefix={<SearchOutlined />}
-            placeholder="جست‌وجوی مخاطب..."
-            aria-label="جست‌وجوی مخاطب"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            allowClear
-          />
         </header>
 
         <div className="messenger__users">
           {isPending ? (
             <div className="messenger__list-state" role="status">
               <Spin />
-              <span>دریافت مخاطب‌ها...</span>
+              <span>در حال دریافت مخاطب‌ها...</span>
             </div>
-          ) : isError ? (
-            <div className="messenger__list-state" role="alert">
-              <span>دریافت مخاطب‌ها انجام نشد.</span>
-              <Button
-                size="small"
-                onClick={() => refetch()}
-                loading={isFetching}
-              >
-                تلاش دوباره
-              </Button>
-            </div>
-          ) : filteredUsers.length === 0 ? (
+          ) : !users?.length ? (
             <div className="messenger__list-state">
               <UserOutlined />
-              <span>مخاطبی پیدا نشد.</span>
+              <span>
+                {isError
+                  ? "دریافت مخاطب‌ها انجام نشد."
+                  : "مخاطبی پیدا نشد."}
+              </span>
             </div>
           ) : (
-            filteredUsers.map((user) => (
+            users.map((user) => (
               <button
                 type="button"
-                className={`messenger__user ${
-                  user.id === channel?.id
-                    ? "messenger__user--active"
-                    : ""
-                }`}
                 key={user.id}
+                className={`messenger__user ${
+                  user.id === channel?.id ? "messenger__user--active" : ""
+                }`}
                 onClick={() => setChannel(user)}
                 aria-pressed={user.id === channel?.id}
               >
-                <span className="messenger__avatar">
+                <span className="messenger__avatar" aria-hidden="true">
                   {Array.from(user.username || "?")[0].toUpperCase()}
                 </span>
 
@@ -142,15 +92,6 @@ export default function ChatApp() {
             ))
           )}
         </div>
-
-        <footer className="messenger__connection">
-          <span
-            className={`messenger__connection-dot ${
-              connected ? "messenger__connection-dot--online" : ""
-            }`}
-          />
-          {connected ? "متصل به سرور گفت‌وگو" : "اتصال به سرور برقرار نیست"}
-        </footer>
       </aside>
 
       <div className="messenger__main">
@@ -161,11 +102,11 @@ export default function ChatApp() {
                 className="messenger__back"
                 type="text"
                 icon={<ArrowRightOutlined />}
-                onClick={() => setChannel(null)}
+                onClick={() => setChannel(undefined)}
                 aria-label="بازگشت به مخاطب‌ها"
               />
 
-              <span className="messenger__avatar">
+              <span className="messenger__avatar" aria-hidden="true">
                 {Array.from(channel.username || "?")[0].toUpperCase()}
               </span>
 
@@ -176,17 +117,7 @@ export default function ChatApp() {
             </header>
 
             <div className="messenger__chat-body">
-              {socket ? (
-                <Chat
-                  key={channel.id}
-                  channel={channel}
-                  socket={socket}
-                />
-              ) : (
-                <div className="messenger__list-state">
-                  <Spin />
-                </div>
-              )}
+              <Chat key={channel.id} channel={channel} socket={socket} />
             </div>
           </>
         ) : (
@@ -194,14 +125,9 @@ export default function ChatApp() {
             <span className="messenger__empty-icon">
               <MessageOutlined />
             </span>
-
             <span className="messenger__eyebrow">LET’S TALK</span>
             <h3>هر گفت‌وگو، یک شروع تازه‌ست.</h3>
-            <p>
-              یک مخاطب از لیست انتخاب کن
-              <br />
-              و اولین پیام رو بفرست.
-            </p>
+            <p>یک مخاطب از لیست انتخاب کن و اولین پیام رو بفرست.</p>
           </div>
         )}
       </div>

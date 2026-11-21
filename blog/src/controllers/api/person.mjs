@@ -11,4 +11,4 @@ class PersonController {
     }
 }
 
-export default new PersonController
+export default new PersonController()
